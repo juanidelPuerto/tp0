@@ -22,7 +22,7 @@ int main(void)
 	
 
 	/* ---------------- ARCHIVOS DE CONFIGURACION ---------------- */
-
+	
 	config = iniciar_config();
 	config = config_create("cliente.config");
 	ip = config_get_string_value(config, "IP");
@@ -36,7 +36,7 @@ int main(void)
 	log_info(logger, ip);
 	log_info(logger, puerto);
 	log_info(logger, valor);
-
+	
 	/* ---------------- LEER DE CONSOLA ---------------- */
 
 	leer_consola(logger);
@@ -85,30 +85,31 @@ void leer_consola(t_log* logger)
 		log_info(logger, leido);
 		leido = readline("> ");
 	}
-	rl_clear_history();
+	free(leido);
 	// ¡No te olvides de liberar las lineas antes de regresar!
-	return 0;
+	
 }
 
 void paquete(int conexion)
 {
 	// Ahora toca lo divertido!
 	char* leido;
-	t_paquete* paquete;
+	t_paquete* paquete = crear_paquete();
 
 	// Leemos y esta vez agregamos las lineas al paquete
 	leido = readline("> ");
 	while(strcmp(leido, "") != 0){
-		agregar_a_paquete(paquete, leido, strlen(leido)+1);
+		agregar_a_paquete(paquete, leido, strlen(leido) + 1);
+		free(leido);
 		leido = readline("> ");
 	}
 
 	enviar_paquete(paquete, conexion);
 
 	// ¡No te olvides de liberar las líneas y el paquete antes de regresar!
-	rl_clear_history();
+	
 	eliminar_paquete(paquete);
-	return 0;
+	
 }
 
 void terminar_programa(int conexion, t_log* logger, t_config* config)
